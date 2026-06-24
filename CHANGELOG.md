@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🐞 Fixed
+- The microphone now recovers when the app returns to the foreground after an audio-session interruption that ended while the app was backgrounded, instead of staying silent (recording but capturing nothing) until the user leaves and rejoins the call.
+
 ### 🔄 Changed
 
 # [1.48.0](https://github.com/GetStream/stream-video-swift/releases/tag/1.48.0)
