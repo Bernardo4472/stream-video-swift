@@ -274,10 +274,11 @@ final class RTCAudioStore_InterruptionsEffectTests: XCTestCase, @unchecked Senda
         // Two independent producers (mirroring the real notification thread and
         // the main thread) hammer the single serial processing queue.
         group.enter()
-        interruptionsQueue.async { [session, publisher] in
+        interruptionsQueue.async { [publisher] in
+            let session = RTCAudioSession.sharedInstance()
             for _ in 0..<iterations {
-                publisher?.audioSessionDidBeginInterruption(session!)
-                publisher?.audioSessionDidEndInterruption(session!, shouldResumeSession: true)
+                publisher?.audioSessionDidBeginInterruption(session)
+                publisher?.audioSessionDidEndInterruption(session, shouldResumeSession: true)
             }
             group.leave()
         }
