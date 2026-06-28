@@ -5,6 +5,7 @@
 import Accelerate
 import AudioToolbox
 import AVFoundation
+import CoreAudio
 
 extension CMSampleBuffer {
     /// RMS and peak levels computed from a sample buffer.

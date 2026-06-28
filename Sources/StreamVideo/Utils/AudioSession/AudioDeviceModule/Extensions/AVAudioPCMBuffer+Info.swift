@@ -5,6 +5,7 @@
 import Accelerate
 import AudioToolbox
 import AVFoundation
+import CoreAudio
 import Foundation
 
 extension AVAudioPCMBuffer {

@@ -328,11 +328,16 @@ final class StreamVideoCapturer: StreamVideoCapturing, @unchecked Sendable {
     }
 
     func supportsBackgrounding() -> Bool {
+        #if targetEnvironment(macCatalyst)
+        // isMultitaskingCameraAccessSupported is unavailable on Mac Catalyst.
+        return false
+        #else
         if #available(iOS 16.0, *) {
             return videoCaptureSession?.isMultitaskingCameraAccessSupported ?? false
         } else {
             return false
         }
+        #endif
     }
 
     // MARK: - Actions
