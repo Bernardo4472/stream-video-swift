@@ -224,6 +224,15 @@ extension View {
         presentationValidator: @escaping (Call?) -> Bool = { _ in true },
         @ViewBuilder _ content: @escaping (Call?, @escaping () -> Void) -> some View
     ) -> some View {
+        #if targetEnvironment(macCatalyst)
+        // Mac Catalyst floor is 14.0; iOS-13 fallback is dead/unavailable here.
+        modifier(
+            CallEndedViewModifier(
+                presentationValidator: presentationValidator,
+                subviewProvider: content
+            )
+        )
+        #else
         if #available(iOS 14.0, *) {
             modifier(
                 CallEndedViewModifier(
@@ -239,5 +248,6 @@ extension View {
                 )
             )
         }
+        #endif
     }
 }

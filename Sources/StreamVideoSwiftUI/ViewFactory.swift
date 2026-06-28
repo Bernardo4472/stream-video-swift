@@ -214,6 +214,20 @@ extension ViewFactory {
     }
 
     public func makeIncomingCallView(viewModel: CallViewModel, callInfo: IncomingCall) -> some View {
+        #if targetEnvironment(macCatalyst)
+        // Mac Catalyst floor is 14.0; the iOS-13 fallback (obsoleted at 14) is
+        // dead code and its type is unavailable here. Use the modern view.
+        return IncomingCallView(
+            viewFactory: self,
+            callInfo: callInfo,
+            onCallAccepted: { _ in
+                viewModel.acceptCall(callType: callInfo.type, callId: callInfo.id)
+            },
+            onCallRejected: { _ in
+                viewModel.rejectCall(callType: callInfo.type, callId: callInfo.id)
+            }
+        )
+        #else
         if #available(iOS 14.0, *) {
             return IncomingCallView(
                 viewFactory: self,
@@ -237,6 +251,7 @@ extension ViewFactory {
                 }
             )
         }
+        #endif
     }
 
     public func makeWaitingLocalUserView(viewModel: CallViewModel) -> some View {
@@ -346,6 +361,17 @@ extension ViewFactory {
         let handleCloseLobby = {
             viewModel.setCallingState(.idle)
         }
+        #if targetEnvironment(macCatalyst)
+        // Mac Catalyst floor is 14.0; iOS-13 fallback is dead/unavailable here.
+        return LobbyView(
+            viewFactory: self,
+            callId: lobbyInfo.callId,
+            callType: lobbyInfo.callType,
+            callSettings: callSettings,
+            onJoinCallTap: handleJoinCall,
+            onCloseLobby: handleCloseLobby
+        )
+        #else
         if #available(iOS 14.0, *) {
             return LobbyView(
                 viewFactory: self,
@@ -366,6 +392,7 @@ extension ViewFactory {
                 onCloseLobby: handleCloseLobby
             )
         }
+        #endif
     }
 
     public func makeReconnectionView(viewModel: CallViewModel) -> some View {
@@ -377,6 +404,15 @@ extension ViewFactory {
         callSettings: Binding<CallSettings>,
         call: Call?
     ) -> some ViewModifier {
+        #if targetEnvironment(macCatalyst)
+        // Mac Catalyst floor is 14.0; iOS-13 fallback is dead/unavailable here.
+        return LocalParticipantViewModifier(
+            localParticipant: localParticipant,
+            call: call,
+            callSettings: callSettings,
+            showAllInfo: true
+        )
+        #else
         if #available(iOS 14.0, *) {
             return LocalParticipantViewModifier(
                 localParticipant: localParticipant,
@@ -392,6 +428,7 @@ extension ViewFactory {
                 showAllInfo: true
             )
         }
+        #endif
     }
 
     public func makeUserAvatar(
